@@ -1,0 +1,59 @@
+---
+title: "Homework 9"
+author: "Brandon Simelgor"
+date: "2023-04-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Brandon Simelgor
+https://github.com/Simelgor05/Homework-9.git
+
+```{r}
+library(dplyr)
+
+av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
+av
+```
+
+```{r}
+parse_number <- function(column_name) {
+  as.numeric(gsub("[^0-9]", "", column_name))
+}
+```
+
+Get the data into a format where the five columns for Death[1-5] are replaced by two columnes: Time, and Death. Time should be a number between 1 and 5.
+```{r}
+death_columns <- grep("^Death", names(av))
+deaths <- data.frame(Name = av$Name,
+                     Time = sapply(names(av)[death_columns], parse_number),
+                     Death = factor(ifelse(av[,death_columns] == "YES", "yes", ifelse(av[,death_columns] == "NO", "no", ""))))
+
+
+```
+
+Similarly, deal with the returns of characters.
+```{r}
+return_columns <- grep("^Return", names(av))
+returns <- data.frame(Name = av$Name,
+                      Time = sapply(names(av)[return_columns], parse_number),
+                      Return = factor(ifelse(av[,return_columns] == "YES", "yes", ifelse(av[,return_columns] == "NO", "no", ""))))
+
+```
+
+Each team member picks one of the statements in the FiveThirtyEight analysis and fact checks it based on the data. Use dplyr functionality whenever possible.
+
+If Iron Man fakes his death to chill out for a while but all his friends (and the reader) know he’s just kicking it somewhere, he didn’t die.
+```{r}
+deaths <- deaths %>%
+  mutate(Name = if_else(Name == 'Anthony Edward "Tony" Stark', "Iron Man", Name))
+
+IronManDeath <- deaths %>%
+  filter(Name == "Iron Man") %>%
+  pull(Death)
+head(IronManDeath)
+```
+If Iron man is seen dead but all his allies know he is not dead than he will return.
