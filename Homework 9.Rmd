@@ -54,6 +54,11 @@ deaths <- deaths %>%
 IronManDeath <- deaths %>%
   filter(Name == "Iron Man") %>%
   pull(Death)
-head(IronManDeath)
+IronManDeath
+
+IronManReturn <- returns %>% 
+  filter(Name == "Iron Man") %>%
+  pull(Return)
+IronManReturn
 ```
-If Iron man is seen dead but all his allies know he is not dead than he will return.
+If Iron man is seen dead but all his allies know he is not dead than he will not be marked as dead in the data and would also then not need to return which would mean the data is correct in showing that he only died once and returned once because this scenario does not mean he is dead according to the conditions for death mentioned in the article. 
